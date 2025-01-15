@@ -1,0 +1,234 @@
+Now that you've created a player object and a game environment, it's time to think about how the player GameObject should move and behave. 
+It needs to be able to roll around on the game area, bump into walls but stay on the ground and not fly off into space, and collide with collectable GameObjects to pick them up. 
+These things require physics. 
+To use physics, the GameObject needs a Rigidbody component. 
+To attach this, you need to, in the Hierarchy, select the player GameObject. 
+Next, in the Inspector, select Add Component then search for Rigidbody, and add it to the sphere. 
+You can collapse or expand the component view by clicking on the component's title bar. 
+Whenever you expand a component like this, it will also toggle the relevant gizmos for that component in the Scene view. 
+Okay, now that the player GameObject can interact with the physics system, it's time to apply some forces to it. 
+In the next video, you'll install the Input System package so you can do just that.Before you create the script to control the player objects movement, let's make a folder to organize script assets. 
+In the Project window, click on the Create menu and choose create Folder. 
+Rename this folder Scripts. 
+
+
+Now you're ready to create a new C# script. 
+You'll be using C# as the programming language as this is what Unity supports. 
+To create a new script, you have some choices. You can go to the top menu and select Assets > Create, to create a new C# script. 
+You can also use the Create menu in the Project window. 
+But what might be most efficient in this case is to select the player GameObject in the Hierarchy and then use the Add Component button in the Inspector. 
+The Add Component menu contains the option new script. You can select this to create and attach a new script in one step. Name the new script PlayerController. 
+Select Create and Add or press the enter key to confirm your selection. 
+Unity will create, compile, and attach the script to the selected GameObject. 
+In this case, the sphere called Player. 
+Creating a script directly on a GameObject creates that script asset on the root or top level of our project files shown in the Project window. 
+To keep things organized, move the player controller asset into the Scripts directory you created. 
+Next, select the script in the Project window. 
+You'll be able to see a preview of the script asset in the Inspector but you can't edit this text. 
+Let's open the script fully. 
+There are two main ways to do this. 
+You can double click on the script asset in the Project window or you can use the open button in the Inspector when the script is selected in the Project window. 
+Each of these options will open the script in your preferred script editor. 
+This is Visual Studio by default. 
+Don't worry if this takes a little bit of time to load, especially if this is the first time you've opened your script editor. 
+In the next video you'll begin to write your first custom script to get the player sphere moving.In the last video, you wrote a declaration for the OnMove function. 
+Next, let's use the method Get to get to movement input data from the sphere and store it as a Vector2 variable. 
+In the space inside the OnMove function, add the line, Vector2 movementVector = movementValue.get < Vector2 > ; 
+This code takes or gets the Vector2 data from the movement value and stores it in a Vector2 variable you are creating called movementVector. 
+The player GameObject uses a Rigidbody and interacts with a physics engine. 
+Next, you need to use the variable you just created to add or apply forces to the Rigidbody and move the player GameObject in the scene. 
+To do this, your Player Controller script will need to access the Rigidbody component and add force to the player GameObject. 
+First, let's create a variable to hold the reference in the script. 
+Above the Start function, add the following code, private Rigidbody rb; 
+This will create a private variable of the type Rigidbody and call that variable rb. 
+This will hold a reference to the Rigidbody you need to access. 
+The variable is private and not public, because you don't need this variable to be accessible from the Inspector or from other scripts right now. 
+Next, inside the Start function, write rb = GetComponent <Rigidbody> ; 
+This sets the value of the variable rb by getting a reference to the Rigidbody component attached to the player sphere GameObject. 
+There is definitely a rigidbody component attached to the GameObject because you added that component earlier. 
+All of the code in the Start function is called on the first frame that the script is active. 
+This is often the very first frame of the game. 
+So the player will be able to move the sphere straight away. 
+Now you need to set up the Fixed Update function so you can call add force on the Rigidbody stored in the variable rb. 
+First, create a new function called FixedUpdate below the Start function. 
+And just like that function, the type should be void because it will perform a task and not return any values, and there should be no parameters in the parentheses. 
+You'll learn more about the uses of the void type with functions as you continue your programming learning journey. 
+Remember to add a set of curly braces beneath the function declaration. 
+This is where you'll add your code. 
+Excellent. 
+In the next video, you'll add force to the player GameObject's Rigidbody.Next, let's start to write the code for adding force. 
+In the function body, add the code rb.AddForce, inside open and closed brackets, type movementVector and then end that line with a semicolon. 
+You'll probably see in your script editor that there is an error on this line. 
+There are two reasons for this. 
+Firstly, the variable you are trying to use is a Vector2 and you need to give this method a vector3 variable. 
+Vector3 variables store data across three axes, x, y, and z. 
+These values will determine the direction of the force you add to the ball. 
+If you head back to the editor and look at the global gizmo, you can see the arrows also indicate this. 
+To resolve this issue, you need to create two new variables for the individual input directions. 
+Underneath the Rigidbody variable you created, add two more variables called movementX and movementY. 
+These should be private like the previous variable, float type, which is short for floating point or decimal point value. 
+These give you more precision than a whole number or integer value. 
+You can then reference these values inside of OnMove and assign these values of movement vectors X and Y. 
+In OnMove, add the following two lines of code. 
+movementX equals movementVector.X; 
+movementY equals movementVector.Y; 
+Excellent. 
+The second reason you were getting an error is because the movement vector variable was created inside of OnMove. 
+That means it's what's called nonexistent in the current context, as it was inside another method. 
+To fix this, you can combine the movement floats you just created inside of FixedUpdate to create a vector3 variable. 
+This will take zero as the y value because the ball needs to move along the x and z axis in 3D space. 
+In the FixedUpdate function, add a new line at the top of the function and write Vector3 movement equals new Vector3, open brackets, movementX, 0.0f, movementY close brackets and then a semicolon. 
+The f after the value signifies that this is a float value. 
+Next, use the new Vector3 variable, movement, to Add Force to the Rigidbody of the player sphere. 
+Revise the second line of code in FixedUpdate to rb.AddForce ; 
+Let's save the script and then return to the Unity editor to give it a try. 
+Use the Play button to enter play mode and test. 
+It works! But the player is moving really slowly. 
+Leave Play mode to stop testing. 
+In the next video, you'll adjust the script to fix this.Okay, you've almost finished setting up the player movement, but the speed isn't quite right. 
+Let's go back to your script editor to fix that. 
+First, let's add a speed variable to the script, so that you can control the player movement from inside the Inspector. 
+Go to the start of the script, where you have declared other variables. 
+Add a public float variable called speed, to the start of the script with a starting value of zero. 
+To do this, write public float speed = 0; 
+Next, back in Fixed Update, multiply the force you are adding to the sphere's Rigidbody, by this strength variable. 
+To do this, revise your line of code to, rb.AddForce ; 
+Then save your script, and return to the editor. 
+Because you made the speed variable public, you can find it in the Inspector on the Player Controller script component. 
+Let's try changing the variable's value to ten, to see if the speed is fast enough to improve the player experience. 
+Enter play mode, and test the revised movement. 
+Great. 
+This looks like a good speed for the player, and the value is now exposed, so you can adjust it easily from the Unity editor if you need to. 
+Exit play mode, and then save your changes to the scene. 
+Congratulations. 
+The player can now move the sphere. 
+In the next section of this project, you'll explore how to set up the camera for your game.Let's add the player input to the sphere.
+
+
+First, in the hierarchy, select the player game object. 
+
+
+In the inspector, select add component, then search for and add player input.
+
+
+This will help you get the player movement for your game set up quickly.
+
+
+The player sphere still won't move just yet. But you will be able to access the information this component provides about control devices such as the player's keyboard using a script to control the player object's movement.
+
+
+In the next video, you'll get started with that script.Okay, let's get started with your first script. 
+You'll see that there is some code already there. 
+This is a template to make it easier to get started writing Unity scripts. 
+A function is a way to group code under one name. 
+There are two functions included in the script template, Start and Update. 
+You can use the function name as a shorthand, or call the function instead of writing the same code every time. 
+The code in Start is called when your game starts, and the code in Update is called once per frame of your game. 
+You won't actually need the Update function in this script, so remove that code for now. 
+Before you begin writing code, let's think for a moment. 
+What do you need to do with the script? 
+The script needs to check every frame for player input and then apply that to the player GameObject every frame as movement. 
+Where will it check for the movement? 
+The Input System has a method you can use to get the data from this input. 
+Where will it apply the movement? 
+There are two things you can use to apply this, Update and Fixed Update. 
+Update is called before rendering a frame, and this is where most of your code will go. 
+Fixed Update, on the other hand, is called just before performing any physics calculations, and this is where your physics code will go. 
+You will be moving the ball by applying forces to its Rigidbody. 
+This is physics, so you will put this part of the code in Fixed Update. 
+Okay, let's get started. 
+Because you are using the Input System, you need to add its namespace to the script. 
+Namespaces are a collection of classes and other data types which can be imported at the start of your scripts. 
+There are already namespaces used in the template, System.Collections, System.Collections.Generic, and UnityEngine. 
+There are lots of different namespaces. 
+The additional one you need for this script is the InputSystem namespace. 
+Add a new line below the first namespace. 
+Write using UnityEngine .InputSystem; 
+This will enable you to access the code and functions in the InputSystem namespace in this script. 
+The PlayerInput component will notify the PlayerController script of action happening by calling functions with pre-defined names within your scripts. 
+For example, to create the Roll-a-Ball game, you need to be notified whenever the move action happens. 
+The predefined function for the changes in movement controls when pressing WASD or moving a joystick on a controller is called OnMove. 
+In that function, the computer will read the value of the input, for example, up, down, left, or right, and then use that information to move the ball using code in the Update function, which you'll write later. 
+Let's write an OnMove function. 
+The first thing you need to do is write a function declaration, which tells the computer to create a function. 
+Below the start function but before the final curly brace, add a new line. 
+Write void OnMove, open and closed brackets. 
+Void means that this function won't return any values. 
+Next, add an open curly brace, leave a line, and then add a closed curly brace. 
+The space inside the braces is called the function body, and this is where you add instructions for the computer to complete. 
+These instructions are specifically for the function OnMove. 
+Each function has its own set of curly braces. 
+Okay, what's next? 
+The PlayerInput component will be sending data of type input value to your script, so you need to add this to the function's input parameters. 
+These are variables which will be used to store and reference data for the function. 
+Inside the parenthesis, in your function call, add InputValue movementValue. movementValue is the name of the variable you will use within the function. 
+InputValue is the type of variable. 
+Variables can have different data types, which means they store different types of data. 
+The movement of the Roll-a-Ball sphere will be captured in two directions, up and down and left and right. 
+In other words, the MovementValue variable will capture and store the data from the X direction and the Y direction of input devices. 
+This kind of data can be stored as a Vector2 variable. 
+In the next video, you'll create that variable and then start to apply the data to the player sphere.So right now, the camera doesn't move and from its current position can't see a lot. 
+To change this, you need to tie the camera to the player GameObject. 
+First, set the position of the camera. 
+Lift it up by 10 units, tilt it down by 45 degrees. 
+This is a typical third person setup with the camera as a child of the player GameObject. 
+This works well for a lot of games because the camera GameObject will inherit the transform changes of the player GameObject. 
+When the player moves in the game, the camera will move with them. 
+However, for this game, that setup creates a problem. 
+When the player rotates, the camera rotates as well. 
+Because the ball is rolling, the camera is also going to inherit this motion. 
+Let's look at this in play mode. 
+Hold down the up arrow to move. 
+The camera is a child of the player sphere so even though the camera is not moving at all relative to the player's game object, you can see that the player game object is rotating wildly and the camera's point of view rotates with it. 
+Okay, let's exit play mode. 
+Let's think about how to resolve this. 
+The player GameObject in your game, a sphere, is rotating on all three axes, not just one. 
+In a more typical third person game camera setup, the camera as a child of the player GameObject will always be in the position relative to its immediate parent. 
+This position will be the parent's position in the game modified or offset by any value in the child's transform. 
+In this game, that approach won't work so let's detach the camera. 
+The new offset value will be the difference between the player game object and the camera. 
+To do this, you need to associate the camera with the player GameObject with a script rather than as a child of the GameObject. 
+In the next video, you'll write that script.Okay, let's start by creating the new script to control the camera. 
+With the Main Camera GameObject selected in the Hierarchy, select Add Component In the Inspector. 
+Call your new script, CameraController. 
+If you use the Inspector to create the script, it will be placed in the root or top level of the project folders. 
+Move it to your scripts Folder. 
+Open the new script for editing. 
+This script needs two variables. 
+A public GameObject reference to the player GameObject. 
+And a private Vector3 variable to hold the offset value. 
+Inside the first curly brace, add the following line. public GameObject player; 
+This will reference the player GameObject's position. 
+On a new line underneath, add another variable declaration. private Vector3 offset; 
+This will store the offset value. 
+The offset value variable is private because you're going to set the value in the script. 
+Now that you've declared the variable, let's calculate it. 
+To do this, you're going to take the current transform position of the camera GameObject and subtract the transform position of the player GameObject to find the difference between the two. 
+The Start function is the best place for this code. 
+It needs to be calculated immediately when the game starts, but it only needs to be calculated once. 
+In the Start function, on a new line, after the first curly brace, let's write the equation like this. offset = transform.position minus player.transform.position; 
+This will set off set equal to the camera transform position minus the player GameObjects transform position. 
+Next, you're going to use that to set the camera GameObjects transform position. 
+This needs to happen in every frame. 
+So the best place for that code is the Update function. 
+Inside the first curly brace, write transform.position equals player.transform.position + offset; 
+Now when a player moves the sphere with controls on the keyboard, the frame before displaying the camera, the camera GameObject is moved into a new position, aligned with the player GameObject before the frame is displayed. 
+This is just like what would happen if it were a child of that object, except it's only matching the position and not the rotation of the sphere. 
+However, Update is not actually the best place for this code. 
+It is true that Update runs every frame and in Update, each frame, you can track the position of the player GameObject and set the position of the camera. 
+However, you don't control which order all of the Update functions happen. 
+That means that the Update could run before other scripts or Unity systems that will change the player position, like the physics system. 
+So, what's the solution? 
+Well, for follow cameras and tasks, like gathering last known states, it's best to use Late Update. 
+Late Update runs every frame just like Update, but will run after all of the other updates are done. 
+Add Late in front of the Update method to change this. 
+Okay, brilliant. 
+Now, you know that the camera position won't be set until the player has moved for that frame. 
+Let's save the script and return to Unity to test it out.There's one thing that you need to do before testing your changes. 
+Create a reference to the Player GameObject. 
+To do that, drag the Player GameObject from the Hierarchy into the player slot in the camera controller component. 
+Now enter play mode to test what you've done. 
+The camera follows the rolling ball without rotating even as the ball goes over the edge. 
+Excellent. 
+Remember to exit play mode when you finish testing and save your Unity project. 
+Now that you've set up the camera, in the next section of this project, you'll configure the basic play area for the game.

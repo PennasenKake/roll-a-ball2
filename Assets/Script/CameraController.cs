@@ -4,23 +4,22 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
- // Reference to the player GameObject.
  public GameObject player;
 
- // The distance between the camera and the player.
+ //etäisyys kameran ja pelaajan välillä
  private Vector3 offset;
 
- // Start is called before the first frame update.
+ //start-metodi kutsutaan ja pelaajan välillä
  void Start()
     {
- // Calculate the initial offset between the camera's position and the player's position.
+        // lasketaan alkuperäinen etäisyys kameran ja pelaajan välillä
         offset = transform.position - player.transform.position; 
     }
 
- // LateUpdate is called once per frame after all Update functions have been completed.
- void LateUpdate()
+// late update-metodi kutsutaan kerran per frame kaikkien update-funkitoiden jälkeen
+void LateUpdate()
     {
- // Maintain the same offset between the camera and player throughout the game.
+        // säilytetään sama etäisyys kameran ja pelaajan välillä koko pelinajan
         transform.position = player.transform.position + offset;  
     }
 }

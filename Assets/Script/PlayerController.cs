@@ -1,49 +1,53 @@
-
-
-
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
- // Rigidbody of the player.
- private Rigidbody rb; 
+    // Pelaajan Rigidbody-komponentti
+    private Rigidbody rb;     
+    // Tarkistaa, onko pelaaja maassa
+    private bool isGrounded = true; 
+    // Hyppyvoima
+    public float jumpForce = 5f;
 
- // Movement along X and Y axes.
- private float movementX;
- private float movementY;
+    // Pelaajan liikkumisnopeus
+    public float speed = 10f; 
 
- // Speed at which the player moves.
- public float speed = 0; 
-
- // Start is called before the first frame update.
- void Start()
+    // Alustetaan pelaajan Rigidbody-komponentti
+    void Start()
     {
- // Get and store the Rigidbody component attached to the player.
         rb = GetComponent<Rigidbody>();
     }
- 
- // This function is called when a move input is detected.
- void OnMove(InputValue movementValue)
-    {
- // Convert the input value into a Vector2 for movement.
-        Vector2 movementVector = movementValue.Get<Vector2>();
 
- // Store the X and Y components of the movement.
-        movementX = movementVector.x; 
-        movementY = movementVector.y; 
+    // Päivitetään pelaajan syötteet jokaisella ruudulla
+    void Update()
+    {
+        // Pelaajan liikkuminen WASD- tai nuolinäppäimillä
+        float moveHorizontal = Input.GetAxis("Horizontal"); // Liike vasemmalle/oikealle
+        float moveVertical = Input.GetAxis("Vertical");     // Liike eteen/taakse
+
+        // Luodaan liikevektori syötteen perusteella
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+
+        // Lisätään voima pelaajan Rigidbodyyn liikkumista varten
+        rb.AddForce(movement * speed);
+
+        // Tarkistetaan, painetaanko välilyöntinäppäintä hyppyä varten
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isGrounded = false; // Estetään useampi hyppy ilmassa
+        }
     }
 
- // FixedUpdate is called once per fixed frame-rate frame.
- private void FixedUpdate() 
+    // Tarkistetaan törmäykset muiden objektien kanssa
+    private void OnCollisionEnter(Collision collision)
     {
- // Create a 3D movement vector using the X and Y inputs.
-        Vector3 movement = new Vector3 (movementX, 0.0f, movementY);
-
- // Apply force to the Rigidbody to move the player.
-        rb.AddForce(movement * speed); 
+        // Jos törmätty objekti on "Ground"-tagilla, pelaaja on maassa
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
     }
 }
