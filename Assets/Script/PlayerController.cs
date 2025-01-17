@@ -1,43 +1,81 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
     // Pelaajan Rigidbody-komponentti
-    private Rigidbody rb;     
+    private Rigidbody rb;
+
     // Tarkistaa, onko pelaaja maassa
-    private bool isGrounded = true; 
+    private bool isGrounded = true;
+
     // Hyppyvoima
     public float jumpForce = 5f;
 
     // Pelaajan liikkumisnopeus
-    public float speed = 10f; 
+    public float speed = 10f;
 
-    // Alustetaan pelaajan Rigidbody-komponentti
+    // Laskuri, joka kertoo pelaajan saavutetut pisteet
+    private int count;
+
+    // Liikkumisen X- ja Y-komponentit
+    private float movementX;
+    private float movementY;
+
+    // UI-komponentit pisteiden ja voiton näyttämiseen
+    public TextMeshProUGUI countText;
+    public GameObject winTextObject;
+
+    // Alustetaan pelaajan Rigidbody-komponentti ja muut tarvittavat muuttujat
     void Start()
     {
+        // Haetaan Rigidbody-komponentti
         rb = GetComponent<Rigidbody>();
+
+        // Alustetaan laskuri nollaksi
+        count = 0;
+
+        // Päivitetään laskuri UI:hin
+        SetCountText();
+
+        // Piilotetaan voittoteksti alussa
+        winTextObject.SetActive(false);
     }
 
-    // Päivitetään pelaajan syötteet jokaisella ruudulla
-    void Update()
+    // Päivitetään pelaajan liikkeet InputSystemin avulla
+    public void OnMove(InputValue movementValue)
     {
-        // Pelaajan liikkuminen WASD- tai nuolinäppäimillä
-        float moveHorizontal = Input.GetAxis("Horizontal"); // Liike vasemmalle/oikealle
-        float moveVertical = Input.GetAxis("Vertical");     // Liike eteen/taakse
+        // Muutetaan syöte 2D-vektoriksi
+        Vector2 movementVector = movementValue.Get<Vector2>();
 
-        // Luodaan liikevektori syötteen perusteella
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        // Tallennetaan liikkeen X- ja Y-komponentit
+        movementX = movementVector.x;
+        movementY = movementVector.y;
+    }
+
+    // Päivitetään fysiikkatoiminnot kiinteällä päivitystaajuudella
+    private void FixedUpdate()
+    {
+        // Luodaan liikevektori X- ja Y-syötteiden perusteella
+        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
 
         // Lisätään voima pelaajan Rigidbodyyn liikkumista varten
         rb.AddForce(movement * speed);
+    }
 
-        // Tarkistetaan, painetaanko välilyöntinäppäintä hyppyä varten
+    // Tarkistetaan, painetaanko välilyöntinäppäintä hyppyä varten
+    private void Update()
+    {
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
+            // Lisätään hyppyvoima ylöspäin
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false; // Estetään useampi hyppy ilmassa
+
+            // Estetään useampi hyppy ilmassa
+            isGrounded = false;
         }
     }
 
@@ -54,9 +92,30 @@ public class PlayerController : MonoBehaviour
     // Trigger-alueen tarkistus (esim. kerättävät esineet)
     private void OnTriggerEnter(Collider other)
     {
+        // Jos törmätty objekti on "PickUp"-tagilla, kerätään se
         if (other.gameObject.CompareTag("PickUp"))
         {
-            other.gameObject.SetActive(false); // Poista kerättävä esine
+            // Poistetaan kerättävä esine käytöstä
+            other.gameObject.SetActive(false);
+
+            // Kasvatetaan laskuria yhdellä
+            count = count + 1;
+
+            // Päivitetään laskurin arvo UI:hin
+            SetCountText();
+        }
+    }
+
+    // Päivitetään laskurin arvo UI:hin ja tarkistetaan voittoehto
+    private void SetCountText()
+    {
+        // Päivitetään laskurin teksti
+        countText.text = "Count: " + count.ToString();
+
+        // Jos pelaaja on kerännyt kaikki esineet, näytetään voitto
+        if (count >= 12)
+        {
+            winTextObject.SetActive(true);
         }
     }
 }
