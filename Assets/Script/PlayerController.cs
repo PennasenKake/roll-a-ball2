@@ -41,13 +41,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Tarkistetaan törmäykset muiden objektien kanssa
+    // Törmäysten tarkistus
     private void OnCollisionEnter(Collision collision)
     {
         // Jos törmätty objekti on "Ground"-tagilla, pelaaja on maassa
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+        }
+    }
+
+    // Trigger-alueen tarkistus (esim. kerättävät esineet)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("PickUp"))
+        {
+            other.gameObject.SetActive(false); // Poista kerättävä esine
         }
     }
 }
