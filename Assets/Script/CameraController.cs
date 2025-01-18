@@ -4,22 +4,38 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
- public GameObject player;
+    public GameObject player;
 
- //etäisyys kameran ja pelaajan välillä
- private Vector3 offset;
+    // Etäisyys kameran ja pelaajan välillä
+    private Vector3 offset;
 
- //start-metodi kutsutaan ja pelaajan välillä
- void Start()
+    // Start-metodi kutsutaan kerran pelin alussa
+    void Start()
     {
-        // lasketaan alkuperäinen etäisyys kameran ja pelaajan välillä
-        offset = transform.position - player.transform.position; 
+        // Tarkistetaan, että pelaaja ei ole null
+        if (player != null)
+        {
+            // Lasketaan alkuperäinen etäisyys kameran ja pelaajan välillä
+            offset = transform.position - player.transform.position;
+        }
+        else
+        {
+            Debug.LogWarning("Player-objekti on null. Varmista, että se on asetettu Inspectorissa.");
+        }
     }
 
-// late update-metodi kutsutaan kerran per frame kaikkien update-funkitoiden jälkeen
-void LateUpdate()
+    // LateUpdate-metodi kutsutaan kerran per frame kaikkien Update-funktioiden jälkeen
+    void LateUpdate()
     {
-        // säilytetään sama etäisyys kameran ja pelaajan välillä koko pelinajan
-        transform.position = player.transform.position + offset;  
+        // Tarkistetaan, että pelaaja ei ole null
+        if (player != null)
+        {
+            // Säilytetään sama etäisyys kameran ja pelaajan välillä koko pelin ajan
+            transform.position = player.transform.position + offset;
+        }
+        else
+        {
+            Debug.LogWarning("Player-objekti on tuhoutunut tai null. Kamera ei voi seurata pelaajaa.");
+        }
     }
 }
