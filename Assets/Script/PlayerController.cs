@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
 {
     // Pelaajan Rigidbody-komponentti
     private Rigidbody rb;
+    
+    public GameObject replayButton;
 
     // Tarkistaa, onko pelaaja maassa
     private bool isGrounded = true;
@@ -99,6 +101,8 @@ public class PlayerController : MonoBehaviour
             // Näytetään "Hävisit!"-teksti
             winTextObject.SetActive(true);
             winTextObject.GetComponent<TextMeshProUGUI>().text = "Hävisit!";
+            replayButton.SetActive(true); // Näytä "Pelaa uudestaan" -painike
+
         }
     }
 
@@ -131,6 +135,8 @@ public class PlayerController : MonoBehaviour
             winTextObject.SetActive(true);
             winTextObject.GetComponent<TextMeshProUGUI>().text = "Voitit!";
             Destroy(GameObject.FindGameObjectWithTag("Enemy"));
+            replayButton.SetActive(true); // Näytä "Pelaa uudestaan" -painike
+
         }
     }
 }
