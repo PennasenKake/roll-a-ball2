@@ -54,6 +54,8 @@ public class PlayerController : MonoBehaviour
         // Tallennetaan liikkeen X- ja Y-komponentit
         movementX = movementVector.x;
         movementY = movementVector.y;
+        Debug.Log($"Movement Input: X={movementX}, Y={movementY}");
+
     }
 
     // Päivitetään fysiikkatoiminnot kiinteällä päivitystaajuudella
@@ -88,13 +90,15 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
         }
 
+        // Jos törmätty objekti on vihollinen
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // Destroy the current object
-            Destroy(gameObject); 
-            // Update the winText to display "You Lose!"
-            winTextObject.gameObject.SetActive(true);
-            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
+            // Tuhoaa pelaajan objektin
+            Destroy(gameObject);
+
+            // Näytetään "Hävisit!"-teksti
+            winTextObject.SetActive(true);
+            winTextObject.GetComponent<TextMeshProUGUI>().text = "Hävisit!";
         }
     }
 
@@ -108,7 +112,7 @@ public class PlayerController : MonoBehaviour
             other.gameObject.SetActive(false);
 
             // Kasvatetaan laskuria yhdellä
-            count = count + 1;
+            count += 1;
 
             // Päivitetään laskurin arvo UI:hin
             SetCountText();
@@ -119,15 +123,14 @@ public class PlayerController : MonoBehaviour
     private void SetCountText()
     {
         // Päivitetään laskurin teksti
-        countText.text = "Count: " + count.ToString();
+        countText.text = "Pisteet: " + count.ToString();
 
         // Jos pelaaja on kerännyt kaikki esineet, näytetään voitto
         if (count >= 12)
         {
             winTextObject.SetActive(true);
-            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Win!";
+            winTextObject.GetComponent<TextMeshProUGUI>().text = "Voitit!";
             Destroy(GameObject.FindGameObjectWithTag("Enemy"));
-
         }
     }
 }
